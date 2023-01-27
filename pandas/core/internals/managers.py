@@ -2253,7 +2253,7 @@ def _form_blocks(arrays: list[ArrayLike], consolidate: bool) -> list[Block]:
         if isinstance(dtype, np.dtype):
             is_dtlike = dtype.kind in ["m", "M"]
 
-            if issubclass(dtype.type, (str, bytes)):
+            if issubclass(dtype.type, (str, bytes)) and type(dtype)._legacy:
                 dtype = np.dtype(object)
 
             values, placement = _stack_arrays(list(tup_block), dtype)

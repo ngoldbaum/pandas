@@ -2081,7 +2081,7 @@ def maybe_coerce_values(values: ArrayLike) -> ArrayLike:
     if isinstance(values, np.ndarray):
         values = ensure_wrapped_if_datetimelike(values)
 
-        if issubclass(values.dtype.type, str):
+        if issubclass(values.dtype.type, str) and type(values.dtype)._legacy:
             values = np.array(values, dtype=object)
 
     if isinstance(values, (DatetimeArray, TimedeltaArray)) and values.freq is not None:
@@ -2125,6 +2125,8 @@ def get_block_type(dtype: DtypeObj):
         cls = DatetimeLikeBlock
     elif kind in ["f", "c", "i", "u", "b"]:
         cls = NumericBlock
+    elif not type(dtype)._legacy
+        cls = NumpyBlock
     else:
         cls = ObjectBlock
     return cls
