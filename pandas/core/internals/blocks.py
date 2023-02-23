@@ -45,6 +45,7 @@ from pandas.core.dtypes.cast import (
     find_result_type,
     maybe_downcast_to_dtype,
     np_can_hold_element,
+    _should_cast_string_to_object,
 )
 from pandas.core.dtypes.common import (
     ensure_platform_int,
@@ -2081,7 +2082,7 @@ def maybe_coerce_values(values: ArrayLike) -> ArrayLike:
     if isinstance(values, np.ndarray):
         values = ensure_wrapped_if_datetimelike(values)
 
-        if issubclass(values.dtype.type, str) and type(values.dtype)._legacy:
+        if _should_cast_string_to_object(values.dtype):
             values = np.array(values, dtype=object)
 
     if isinstance(values, (DatetimeArray, TimedeltaArray)) and values.freq is not None:
@@ -2109,7 +2110,7 @@ def get_block_type(dtype: DtypeObj):
     kind = dtype.kind
 
     cls: type[Block]
-
+    breakpoint()
     if isinstance(dtype, SparseDtype):
         # Need this first(ish) so that Sparse[datetime] is sparse
         cls = ExtensionBlock
@@ -2125,7 +2126,7 @@ def get_block_type(dtype: DtypeObj):
         cls = DatetimeLikeBlock
     elif kind in ["f", "c", "i", "u", "b"]:
         cls = NumericBlock
-    elif not type(dtype)._legacy
+    elif not type(dtype)._legacy:
         cls = NumpyBlock
     else:
         cls = ObjectBlock

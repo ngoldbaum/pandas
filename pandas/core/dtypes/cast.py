@@ -1874,3 +1874,17 @@ def _dtype_can_hold_range(rng: range, dtype: np.dtype) -> bool:
     if not len(rng):
         return True
     return np.can_cast(rng[0], dtype) and np.can_cast(rng[-1], dtype)
+
+
+def _should_cast_string_to_object(dtype: np.dtype) -> bool:
+    """
+    Legacy numpy string arrays need to be cast to object, but new dtypes
+    can represent variable-length strings natively and shouldn't be cast
+    to object
+    """
+    # if there is no _legacy attribute, it is a legacy dtype
+    # xref https://github.com/numpy/numpy/pull/23143
+    if getattr(type(dtype), "_legacy", True):
+        if issubclass(dtype.type, str):
+            return True
+    return False

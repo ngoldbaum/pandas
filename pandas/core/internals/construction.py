@@ -316,7 +316,7 @@ def ndarray_to_mgr(
 
     if typ == "array":
 
-        if issubclass(values.dtype.type, str):
+        if _should_cast_string_to_object(values.dtype):
             values = np.array(values, dtype=object)
 
         if dtype is None and is_object_dtype(values.dtype):
